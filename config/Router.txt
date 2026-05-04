@@ -1,0 +1,49 @@
+Router-KantorA_Lantai1 Config :
+hostname Router-KantorA_Lantai1
+enable secret 5 $1$mERr$As8UCs6Px6sROUn86xM2Y/
+ip dhcp excluded-address 192.168.11.1 192.168.11.10
+ip dhcp excluded-address 192.168.12.1 192.168.12.10
+ip dhcp excluded-address 192.168.13.1 192.168.13.10
+ip dhcp pool HR_Network
+ network 192.168.11.0 255.255.255.0
+ default-router 192.168.11.1
+ dns-server 10.0.0.3
+ip dhcp pool Admin_Network
+ network 192.168.12.0 255.255.255.0
+ default-router 192.168.12.1
+ dns-server 10.0.0.3
+ip dhcp pool Manager_Network
+ network 192.168.13.0 255.255.255.0
+ default-router 192.168.13.1
+ dns-server 10.0.0.3
+interface GigabitEthernet0/0/0
+ ip address 192.168.100.1 255.255.255.0
+ ip nat inside
+ duplex auto
+ speed auto
+interface Serial0/1/0
+ ip address 200.10.10.2 255.255.255.252
+ ip nat outside
+interface Serial0/2/0
+ ip address 10.10.20.1 255.255.255.252
+ clock rate 2000000
+interface Serial0/2/1
+ ip address 10.10.10.1 255.255.255.252
+ clock rate 2000000
+router ospf 1
+ log-adjacency-changes
+ network 192.168.100.0 0.0.0.255 area 0
+ network 10.10.20.0 0.0.0.3 area 0
+ network 192.168.11.0 0.0.0.255 area 1
+ network 192.168.12.0 0.0.0.255 area 2
+ network 192.168.13.0 0.0.0.255 area 3
+ip nat inside source list 1 interface Serial0/1/0 overload
+ip classless
+ip route 0.0.0.0 0.0.0.0 200.10.10.1
+access-list 1 permit 192.168.0.0 0.0.255.255
+line con 0
+ password 7 080A455D0C120C191D1809002B22757A60
+ login
+line vty 0 4
+ password 7 080A455D0C120C191D1809002B22757A60
+ login

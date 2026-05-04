@@ -1,0 +1,44 @@
+Multilayer Switch Config : 
+interface GigabitEthernet1/0/4
+ no switchport
+ ip address 192.168.100.2 255.255.255.0
+ duplex auto
+ speed auto
+Show vlan configure
+interface Vlan11
+ mac-address 0010.11c4.1301
+ ip address 192.168.11.1 255.255.255.0
+ ip helper-address 192.168.100.1
+ ip access-group FILTER_KANTOR-A_LANTAI1 in
+interface Vlan12
+ mac-address 0010.11c4.1302
+ ip address 192.168.12.1 255.255.255.0
+ ip helper-address 192.168.100.1
+ ip access-group FILTER_KANTOR-A_LANTAI1 in
+interface Vlan13
+ mac-address 0010.11c4.1303
+ ip address 192.168.13.1 255.255.255.0
+ ip helper-address 192.168.100.1
+ ip access-group FILTER_KANTOR-A_LANTAI1 in
+router ospf 1
+ log-adjacency-changes
+ network 192.168.100.0 0.0.0.255 area 0
+ network 192.168.11.0 0.0.0.255 area 1
+ network 192.168.12.0 0.0.0.255 area 2
+ network 192.168.13.0 0.0.0.255 area 3
+ip classless
+ip route 0.0.0.0 0.0.0.0 192.168.100.1
+ip access-list extended FILTER_KANTOR-A_LANTAI1
+ permit udp any any eq domain
+ permit udp any any eq bootpc
+ permit udp any any eq bootps
+ permit tcp any any eq www
+ permit tcp any any eq 443
+ permit icmp any any echo-reply
+ permit ip 192.168.13.0 0.0.0.255 any
+ deny ip 192.168.11.0 0.0.0.255 192.168.13.0 0.0.0.255
+ deny ip 192.168.12.0 0.0.0.255 192.168.13.0 0.0.0.255
+ permit ip any any
+
+
+
